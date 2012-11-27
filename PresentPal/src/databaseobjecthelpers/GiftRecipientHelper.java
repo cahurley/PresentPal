@@ -1,4 +1,4 @@
-package swetipi.presentpal;
+package databaseobjecthelpers;
 
 import android.content.ContentValues;
 import android.content.Context;
