@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Present Pal</string>
+    <string name="menu_settings">Settings</string>
+    
+    <!-- Main Activity -->
+    <string name="empty_list">There are no items to display.</string>
+
+</resources>
