@@ -1,9 +1,16 @@
 <resources>
-
+	<!-- General -->
     <string name="app_name">Present Pal</string>
     <string name="menu_settings">Settings</string>
+    <string name="cancel">Cancel</string>
     
-    <!-- Main Activity -->
-    <string name="empty_list">There are no items to display.</string>
-
+    <!-- Recipient List Activity -->
+    <string name="title_activity_recipient_list">Recipient List</string>
+    <string name="empty_list">There are no recipients to display. Use the menu to add one.</string>
+    
+    <!-- Recipient List Menu -->
+    <string name="add_recipient">Add Recipient</string>
+    
+    <!-- Recipient Dialog -->
+    <string name="recipient_name">Recipient Name</string>
 </resources>

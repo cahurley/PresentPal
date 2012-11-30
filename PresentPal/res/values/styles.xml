@@ -1,5 +1,12 @@
-<resources>
-
-    <style name="AppTheme" parent="android:Theme.Light" />
-
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style 
+        name="AppTheme" 
+        parent="android:Theme.Light" />
+    <style
+        name="error" >
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>
