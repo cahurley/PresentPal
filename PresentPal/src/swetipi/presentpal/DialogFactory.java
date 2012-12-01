@@ -18,6 +18,7 @@ public class DialogFactory
 	public static Dialog createtDialog(Context context, final Cursor cursor, final RecipientHelper helper, DialogType type)
 	{
 		final Dialog dialog = new Dialog(context);
+		dialog.setCancelable(true);
 		LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 		
 		switch(type)
@@ -37,7 +38,6 @@ public class DialogFactory
 						cursor.requery();
 						
 						dialog.dismiss();
-						helper.close();
 					}
 				});
 						

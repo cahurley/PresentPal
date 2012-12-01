@@ -9,10 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class RecipientHelper extends SQLiteOpenHelper 
 {
 	private static final String DATABASE_NAME = "presentpal.db";
+	private static final String TABLE_NAME = "recipients";
 	private static final int SCHEMA_VERSION = 1;
-	
+
 	private static final String CREATE_DATABASE_SCHEMA = "CREATE TABLE recipients (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);";
-	private static final String GET_ALL_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients ORDER BY ";
+	private static final String GET_ALL_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients";
 	private static final String GET_BY_ID_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients WHERE _ID = ?";
 	
 	public RecipientHelper(Context context)
@@ -32,9 +33,9 @@ public class RecipientHelper extends SQLiteOpenHelper
 		// nothing
 	}
 	
-	public Cursor getAll(String orderBy)
+	public Cursor getAll()
 	{
-		return getReadableDatabase().rawQuery(GET_ALL_FROM_RECIPIENT_DB + orderBy, null);
+		return getReadableDatabase().rawQuery(GET_ALL_FROM_RECIPIENT_DB, null);
 	}
 	
 	public Cursor getById(String id)
@@ -59,6 +60,13 @@ public class RecipientHelper extends SQLiteOpenHelper
 		contentValues.put("name", name);
 		
 		getWritableDatabase().update("recipients", contentValues, "_ID=?", whereArgs);
+	}
+	
+	public void removeById(String id)
+	{
+		String[] whereArgs = {id};
+		
+		getReadableDatabase().delete(TABLE_NAME, "_ID=?", whereArgs);
 	}
 	
 	public String getName(Cursor cursor)

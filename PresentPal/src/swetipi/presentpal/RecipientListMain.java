@@ -1,9 +1,11 @@
 package swetipi.presentpal;
 
 import modelhelpers.RecipientHelper;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,11 +32,48 @@ public class RecipientListMain extends ListActivity
         setContentView(R.layout.activity_recipient_list);
         
         helper = new RecipientHelper(this);
-        cursor = helper.getAll("name");
+        cursor = helper.getAll();
         
         ListView list = getListView();
         adapter = new RecipientListAdapter(cursor);
         list.setAdapter(adapter);
+        
+        list.setOnItemLongClickListener(new OnItemLongClickListener()
+        {
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) 
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(RecipientListMain.this);
+				builder.setCancelable(true);
+				
+				TextView name = (TextView)view.findViewById(R.id.textview_recipient_name);
+				builder.setMessage(String.format("Are you sure you want to delete %s from your list?", name.getText().toString()));
+				
+				builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() 
+				{
+					@SuppressWarnings("deprecation")
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						helper.removeById(Long.toString(id));
+						cursor.requery();
+						
+						dialog.dismiss();
+					}
+				});
+				
+				builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() 
+				{
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						dialog.cancel();
+					}
+				});
+				
+				builder.create().show();
+				
+				return true;
+			}	
+
+		});
     }
 	
 	@Override
@@ -51,7 +92,6 @@ public class RecipientListMain extends ListActivity
         return super.onCreateOptionsMenu(menu);
     }
     
-    @SuppressWarnings("deprecation")
 	@Override
     public boolean onOptionsItemSelected(MenuItem item)
     {

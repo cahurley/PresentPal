@@ -13,4 +13,9 @@ public class Recipient
 	{
 		this.recipientName = recipientName;
 	}
+	
+	public String toString()
+	{
+		return getName();
+	}
 }
