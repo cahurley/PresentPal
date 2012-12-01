@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,7 +14,8 @@ import android.widget.EditText;
 
 public class DialogFactory
 {
-	public static Dialog createtDialog(final Context context, DialogType type)
+	// TODO: make an interface so I can pass in a generic Helper
+	public static Dialog createtDialog(Context context, final Cursor cursor, final RecipientHelper helper, DialogType type)
 	{
 		final Dialog dialog = new Dialog(context);
 		LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -29,10 +31,10 @@ public class DialogFactory
 				{
 					public void onClick(View v) 
 					{
-						RecipientHelper helper = new RecipientHelper(context);
-						
 						String recipientName = ((EditText)dialog.findViewById(R.id.edittext_recipient_name)).getText().toString();
 						helper.insert(recipientName);
+						
+						cursor.requery();
 						
 						dialog.dismiss();
 						helper.close();

@@ -21,7 +21,6 @@ public class RecipientListMain extends ListActivity
 	private RecipientListAdapter adapter = null;
 	private RecipientHelper helper = null;
 	
-	@SuppressWarnings("deprecation")
 	@Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -30,12 +29,19 @@ public class RecipientListMain extends ListActivity
         
         helper = new RecipientHelper(this);
         cursor = helper.getAll("name");
-        startManagingCursor(cursor);
         
         ListView list = getListView();
         adapter = new RecipientListAdapter(cursor);
         list.setAdapter(adapter);
     }
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		
+		helper.close();
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) 
@@ -45,13 +51,14 @@ public class RecipientListMain extends ListActivity
         return super.onCreateOptionsMenu(menu);
     }
     
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
     	int itemId = item.getItemId();
     	if (itemId == R.id.menu_add_recipient)
     	{
-    		Dialog dialog = DialogFactory.createtDialog(this, DialogType.ADD_RECIPIENT);
+    		Dialog dialog = DialogFactory.createtDialog(this, cursor, helper, DialogType.ADD_RECIPIENT);
     		dialog.show();
     	}
     	
