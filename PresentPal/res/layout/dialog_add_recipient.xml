@@ -13,4 +13,21 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button 
+            android:id="@+id/button_add_recipient"
+            android:text="@string/add_recipient" 
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="50"/>
+        <Button
+            android:id="@+id/button_cancel_add_recipient"
+            android:text="@string/cancel" 
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="50"/>
+    </LinearLayout>
 </LinearLayout>

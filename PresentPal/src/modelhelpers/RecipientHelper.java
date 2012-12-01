@@ -1,4 +1,4 @@
-package databaseobjecthelpers;
+package modelhelpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class GiftRecipientHelper extends SQLiteOpenHelper 
+public class RecipientHelper extends SQLiteOpenHelper 
 {
 	private static final String DATABASE_NAME = "presentpal.db";
 	private static final int SCHEMA_VERSION = 1;
@@ -15,7 +15,7 @@ public class GiftRecipientHelper extends SQLiteOpenHelper
 	private static final String GET_ALL_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients ORDER BY ";
 	private static final String GET_BY_ID_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients WHERE _ID = ?";
 	
-	public GiftRecipientHelper(Context context)
+	public RecipientHelper(Context context)
 	{
 		super(context, DATABASE_NAME, null, SCHEMA_VERSION);
 	}

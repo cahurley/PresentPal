@@ -1,4 +1,4 @@
-package databaseobjects;
+package model;
 
 public class Gift 
 {

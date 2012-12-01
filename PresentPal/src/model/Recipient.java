@@ -1,6 +1,6 @@
-package databaseobjects;
+package model;
 
-public class GiftRecipient 
+public class Recipient 
 {
 	private String recipientName;
 	
