@@ -51,6 +51,10 @@ public class DialogFactory
 				});
 
 				return dialog;
+			case ASK_ADD_GIFT:
+				break;
+			case ADD_GIFT:
+				break;
 			default:
 				return null;
 		}
