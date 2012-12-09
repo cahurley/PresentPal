@@ -1,6 +1,6 @@
-package swetipi.presentpal;
+package com.example.presentpalv2;
 
-import modelhelpers.RecipientHelper;
+import modelhelpers.GiftHelper;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -14,47 +14,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemLongClickListener;
 
-public class RecipientListMain extends ListActivity 
+public class GiftListActivity extends ListActivity  
 {
-	private Cursor cursor = null;
-	private RecipientListAdapter adapter = null;
-	private RecipientHelper helper = null;
+	private Cursor giftCursor = null;
+	private GiftListAdapter adapter = null;
+	private GiftHelper giftHelper = null;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) 
     {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipient_list);
+		super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_gift_list);
         
-        helper = new RecipientHelper(this);
-        cursor = helper.getAll();
+        giftHelper = new GiftHelper(this);
+        giftCursor = giftHelper.getAll("name");
         
         ListView list = getListView();
-        adapter = new RecipientListAdapter(cursor);
+        adapter = new GiftListAdapter(giftCursor);
         list.setAdapter(adapter);
         
         list.setOnItemLongClickListener(new OnItemLongClickListener()
         {
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) 
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(RecipientListMain.this);
-				builder.setCancelable(true);
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) 
+			{	
+				giftCursor.moveToPosition(position);
 				
-				TextView name = (TextView)view.findViewById(R.id.textview_recipient_name);
-				builder.setMessage(String.format("Are you sure you want to delete %s from your list?", name.getText().toString()));
+				AlertDialog.Builder builder = new AlertDialog.Builder(GiftListActivity.this);
+				builder.setCancelable(true);
+				builder.setMessage(String.format("Are you sure you want to delete %s from your list?", giftHelper.getName(giftCursor)));
 				
 				builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() 
 				{
 					@SuppressWarnings("deprecation")
 					public void onClick(DialogInterface dialog, int which) 
 					{
-						helper.removeById(Long.toString(id));
-						cursor.requery();
+						giftHelper.removeById(giftHelper.getId(giftCursor));
+						giftCursor.requery();
 						
 						dialog.dismiss();
 					}
@@ -64,7 +64,7 @@ public class RecipientListMain extends ListActivity
 				{
 					public void onClick(DialogInterface dialog, int which) 
 					{
-						dialog.cancel();
+						dialog.dismiss();
 					}
 				});
 				
@@ -81,13 +81,13 @@ public class RecipientListMain extends ListActivity
 	{
 		super.onDestroy();
 		
-		helper.close();
+		giftHelper.close();
 	}
-
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) 
     {
-        getMenuInflater().inflate(R.menu.activity_recipient_list, menu);
+        getMenuInflater().inflate(R.menu.activity_gift_list, menu);
         
         return super.onCreateOptionsMenu(menu);
     }
@@ -96,36 +96,40 @@ public class RecipientListMain extends ListActivity
     public boolean onOptionsItemSelected(MenuItem item)
     {
     	int itemId = item.getItemId();
-    	if (itemId == R.id.menu_add_recipient)
+    	if (itemId == R.id.menu_add_gift_manually)
     	{
-    		Dialog dialog = DialogFactory.createtDialog(this, cursor, helper, DialogType.ADD_RECIPIENT);
+    		Dialog dialog = DialogFactory.createtDialog(this, giftCursor, giftHelper, DialogType.ADD_GIFT_MANUALLY);
     		dialog.show();
+    	}
+    	else if (itemId == R.id.menu_add_gift_barcode)
+    	{
+    		// barcode scanner
     	}
     	
     	return super.onOptionsItemSelected(item);
     }
-    
-    class RecipientListAdapter extends CursorAdapter
+	
+    class GiftListAdapter extends CursorAdapter
     {
-    	public RecipientListAdapter(Cursor cursor) 
+    	public GiftListAdapter(Cursor cursor) 
     	{
-			super(RecipientListMain.this, cursor);
+			super(GiftListActivity.this, cursor);
 		}
     	
     	@Override
     	public void bindView(View row, Context context, Cursor cursor)
     	{
-    		RecipientHolder holder = (RecipientHolder)row.getTag();
+    		GiftHolder holder = (GiftHolder)row.getTag();
     		
-    		holder.populateFrom(cursor, helper);
+    		holder.populateFrom(cursor, giftHelper);
     	}
     	
     	@Override
     	public View newView(Context context, Cursor cursor, ViewGroup parent)
     	{
     		LayoutInflater inflater = getLayoutInflater();
-    		View row = inflater.inflate(R.layout.recipient_row, parent, false);
-    		RecipientHolder holder = new RecipientHolder(row);
+    		View row = inflater.inflate(R.layout.list_row, parent, false);
+    		GiftHolder holder = new GiftHolder(row);
     		
     		row.setTag(holder);
     		
@@ -133,25 +137,29 @@ public class RecipientListMain extends ListActivity
     	}
     }
     
-    static class RecipientHolder
+    static class GiftHolder
     {
     	private TextView name = null;
     	private TextView quantity = null;
     	private TextView price = null;
     	
-    	public RecipientHolder(View row) 
+    	public GiftHolder(View row) 
     	{
-			name = (TextView)row.findViewById(R.id.textview_recipient_name);
+			name = (TextView)row.findViewById(R.id.textview_name);
 			quantity = (TextView)row.findViewById(R.id.textview_gift_quantity);
 			price = (TextView)row.findViewById(R.id.textview_gift_price);
 		}
     	
-    	void populateFrom(Cursor cursor, RecipientHelper helper)
+    	void populateFrom(Cursor cursor, GiftHelper helper)
     	{
+    		double giftPrice = helper.getPrice(cursor);
+    		int quantityPurchased = helper.getQuantityPurchased(cursor);
+    		int totalQuantity = helper.getTotalQuantity(cursor);
+    		
     		name.setText(helper.getName(cursor));
-    		quantity.setText(String.format("quantity: "));
-    		price.setText(String.format("cost: "));
+    		quantity.setText(String.format("quantity: %d / %d", quantityPurchased, totalQuantity));
+    		price.setText(String.format("price: %.2f / %.2f", giftPrice * quantityPurchased, giftPrice * totalQuantity));
     	}
     }
-    
+	
 }

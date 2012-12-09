@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 
+        android:id="@+id/menu_add_gift_manually"
+        android:title="@string/manual_entry"
+        android:icon="@drawable/keyboard"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/menu_add_gift_barcode"
+        android:title="@string/barcode_scanner"
+        android:icon="@drawable/barcode"
+        android:orderInCategory="200"
+        android:showAsAction="ifRoom|withText" />
+</menu>

@@ -15,7 +15,7 @@
         android:layout_marginRight="4dp" />
 	<EditText
         android:id="@+id/edittext_gift_price"
-        android:hint="@string/gift_name"
+        android:hint="@string/gift_price"
         android:inputType="numberDecimal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
@@ -25,7 +25,7 @@
         android:layout_marginRight="4dp" />
 	<EditText
         android:id="@+id/edittext_gift_quantity"
-        android:hint="@string/gift_name"
+        android:hint="@string/gift_quantity"
         android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
@@ -33,7 +33,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp" />
-    <LinearLayout
+	<LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

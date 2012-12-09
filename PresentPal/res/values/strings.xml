@@ -7,7 +7,7 @@
     
     <!-- Recipient List Activity -->
     <string name="title_activity_recipient_list">Recipient List</string>
-    <string name="empty_list">There are no recipients to display. Use the menu to add one.</string>
+    <string name="recipient_empty_list">There are no recipients to display. Use the menu to add one.</string>
     
     <!-- Recipient List Menu -->
     <string name="add_recipient">Add Recipient</string>
@@ -15,8 +15,11 @@
     <!-- Recipient Dialog -->
     <string name="recipient_name">Recipient Name</string>
     
+    <!-- Gift List Activity -->
+    <string name="gift_empty_list">There are no gifts to display. Use the menu to add one.</string>
+    
     <!-- Gift Manual Entry Dialog -->
-    <string name="barcode_scanner">Barcode Scanner</string>
+    <string name="barcode_scanner">Scan It</string>
     <string name="manual_entry">Manual Entry</string>
     <string name="gift_name">Gift Name</string>
     <string name="gift_price">Price</string>

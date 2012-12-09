@@ -3,38 +3,22 @@ package modelhelpers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
-public class GiftHelper extends SQLiteOpenHelper
+public class GiftHelper extends DatabaseHelper
 {
-	private static final String DATABASE_NAME = "presentpal.db";
-	private static final int SCHEMA_VERSION = 1;
-	
-	private static final String CREATE_DATABASE_SCHEMA = "CREATE TABLE gifts (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price REAL, quantity INTEGER);";
-	private static final String GET_ALL_FROM_GIFT_DB = "SELECT _id, name, price, quantity FROM gifts ORDER BY ";
-	private static final String GET_BY_ID_FROM_GIFT_DB = "SELECT _id, name, price, quantity FROM gifts WHERE _ID = ?";
+	private static final String TABLE_NAME = "gifts";
+	private static final String GET_ALL_FROM_GIFT_DB = "SELECT _id, name, price, quantity_purchased, total_quantity, recipient_id FROM gifts ORDER BY %s";
+	private static final String GET_BY_RECIPIENT_ID_FROM_GIFT_DB = "SELECT _id, name, price, quantity_purchased, total_quantity, recipient_id FROM gifts WHERE recipient_id = %s;";
+	private static final String GET_BY_ID_FROM_GIFT_DB = "SELECT _id, name, price, quantity_purchased, total_quantity, recipient_id FROM gifts WHERE _ID = ?;";
 	
 	public GiftHelper(Context context)
 	{
-		super(context, DATABASE_NAME, null, SCHEMA_VERSION);
-	}
-	
-	@Override
-	public void onCreate(SQLiteDatabase database)
-	{
-		database.execSQL(CREATE_DATABASE_SCHEMA);
-	}
-	
-	@Override
-	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion)
-	{
-		// nothing
+		super(context);
 	}
 	
 	public Cursor getAll(String orderBy)
 	{
-		return getReadableDatabase().rawQuery(GET_ALL_FROM_GIFT_DB + orderBy, null);
+		return getReadableDatabase().rawQuery(String.format(GET_ALL_FROM_GIFT_DB, orderBy), null);
 	}
 	
 	public Cursor getById(String id)
@@ -44,25 +28,55 @@ public class GiftHelper extends SQLiteOpenHelper
 		return getReadableDatabase().rawQuery(GET_BY_ID_FROM_GIFT_DB, selectionArgs);
 	}
 	
-	public void insert(String name, double price, int quantity)
+	public Cursor getByRecipientId(String recipientId)
+	{
+		return getReadableDatabase().rawQuery(String.format(GET_BY_RECIPIENT_ID_FROM_GIFT_DB, recipientId), null);
+	}
+	
+	public long insert(String name, double price, int total_quantity, String recipientId)
 	{
 		ContentValues contentValues = new ContentValues();
 		contentValues.put("name", name);
 		contentValues.put("price", price);
-		contentValues.put("quantity", quantity);
+		contentValues.put("quantity_purchased", 0);
+		contentValues.put("total_quantity", total_quantity);
+		contentValues.put("recipient_id", recipientId);
 		
-		getWritableDatabase().insert("gifts", null, contentValues);
+		return getWritableDatabase().insert("gifts", null, contentValues);
 	}
 	
-	public void update(String id, String name, double price, int quantity)
+	public void update(String id, String name, double price, int quantity_purchased, int total_quantity, String recipientId)
 	{
 		String[] whereArgs = {id};
 		ContentValues contentValues = new ContentValues();
 		contentValues.put("name", name);
 		contentValues.put("price", price);
-		contentValues.put("quantity", quantity);
+		contentValues.put("quantity_purchased", quantity_purchased);
+		contentValues.put("total_quantity", total_quantity);
+		contentValues.put("recipient_id", recipientId);
 		
 		getWritableDatabase().update("gifts", contentValues, "_ID=?", whereArgs);
+	}
+	
+	public void removeById(String id)
+	{
+		String[] whereArgs = {id};
+		
+		getReadableDatabase().delete(TABLE_NAME, "_ID=?", whereArgs);
+	}
+	
+	public void removeByRecipientId(String recipientId)
+	{
+		Cursor cursor = getByRecipientId(recipientId);
+		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+		{
+			removeById(getId(cursor));
+		}
+	}
+	
+	public String getId(Cursor cursor)
+	{
+		return cursor.getString(0);
 	}
 	
 	public String getName(Cursor cursor)
@@ -75,8 +89,18 @@ public class GiftHelper extends SQLiteOpenHelper
 		return cursor.getDouble(2);
 	}
 	
-	public int getQuantity(Cursor cursor)
+	public int getQuantityPurchased(Cursor cursor)
 	{
 		return cursor.getInt(3);
+	}
+	
+	public int getTotalQuantity(Cursor cursor)
+	{
+		return cursor.getInt(4);
+	}
+	
+	public String getRecipientId(Cursor cursor)
+	{
+		return cursor.getString(5);
 	}
 }

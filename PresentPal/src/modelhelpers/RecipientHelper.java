@@ -3,39 +3,21 @@ package modelhelpers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
-public class RecipientHelper extends SQLiteOpenHelper 
+public class RecipientHelper extends DatabaseHelper
 {
-	private static final String DATABASE_NAME = "presentpal.db";
 	private static final String TABLE_NAME = "recipients";
-	private static final int SCHEMA_VERSION = 1;
-
-	private static final String CREATE_DATABASE_SCHEMA = "CREATE TABLE recipients (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);";
-	private static final String GET_ALL_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients";
+	private static final String GET_ALL_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients ORDER BY %s";
 	private static final String GET_BY_ID_FROM_RECIPIENT_DB = "SELECT _id, name FROM recipients WHERE _ID = ?";
 	
 	public RecipientHelper(Context context)
 	{
-		super(context, DATABASE_NAME, null, SCHEMA_VERSION);
+		super(context);
 	}
 	
-	@Override
-	public void onCreate(SQLiteDatabase database)
+	public Cursor getAll(String orderBy)
 	{
-		database.execSQL(CREATE_DATABASE_SCHEMA);
-	}
-	
-	@Override
-	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion)
-	{
-		// nothing
-	}
-	
-	public Cursor getAll()
-	{
-		return getReadableDatabase().rawQuery(GET_ALL_FROM_RECIPIENT_DB, null);
+		return getReadableDatabase().rawQuery(String.format(GET_ALL_FROM_RECIPIENT_DB, orderBy), null);
 	}
 	
 	public Cursor getById(String id)
@@ -67,6 +49,11 @@ public class RecipientHelper extends SQLiteOpenHelper
 		String[] whereArgs = {id};
 		
 		getReadableDatabase().delete(TABLE_NAME, "_ID=?", whereArgs);
+	}
+	
+	public String getId(Cursor cursor)
+	{
+		return cursor.getString(0);
 	}
 	
 	public String getName(Cursor cursor)

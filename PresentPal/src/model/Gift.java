@@ -2,9 +2,15 @@ package model;
 
 public class Gift 
 {
+	private final String id;
 	private String name;
 	private double price;
 	private int quantity;
+	
+	Gift(String id)
+	{
+		this.id = id;
+	}
 	
 	public String getName()
 	{
