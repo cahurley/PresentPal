@@ -1,4 +1,4 @@
-package com.example.presentpalv2;
+package swetipi.presental;
 
 public enum DialogType 
 {

@@ -1,4 +1,4 @@
-package com.example.presentpalv2;
+package swetipi.presental;
 
 import modelhelpers.DatabaseHelper;
 import modelhelpers.GiftHelper;
@@ -67,7 +67,7 @@ public class DialogFactory
 						double giftPrice = Double.parseDouble(((EditText)dialog.findViewById(R.id.edittext_gift_price)).getText().toString());
 						int giftQuantity = Integer.parseInt(((EditText)dialog.findViewById(R.id.edittext_gift_quantity)).getText().toString());
 						
-						String recipientId = ((Activity)context).getIntent().getStringExtra(RecipientList.RECIPIENT_ID_EXTRA);
+						String recipientId = ((Activity)context).getIntent().getStringExtra(RecipientListActivity.RECIPIENT_ID_EXTRA);
 						((GiftHelper)helper).insert(giftName, giftPrice, giftQuantity, recipientId);
 						
 						cursor.requery();

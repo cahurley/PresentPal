@@ -1,4 +1,4 @@
-package com.example.presentpalv2;
+package swetipi.presental;
 
 import modelhelpers.GiftHelper;
 import modelhelpers.RecipientHelper;
@@ -22,7 +22,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RecipientList extends ListActivity 
+public class RecipientListActivity extends ListActivity 
 {
 	public static String RECIPIENT_ID_EXTRA = "swetipi.presentpal.recipient_id";
 	
@@ -51,7 +51,7 @@ public class RecipientList extends ListActivity
 			{	
 				recipientCursor.moveToPosition(position);
 				
-				AlertDialog.Builder builder = new AlertDialog.Builder(RecipientList.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(RecipientListActivity.this);
 				builder.setCancelable(true);
 				builder.setMessage(String.format("Are you sure you want to delete %s from your list?", recipientHelper.getName(recipientCursor)));
 				
@@ -89,7 +89,7 @@ public class RecipientList extends ListActivity
         	{
         		recipientCursor.moveToPosition(position);
         		
-        		Intent intent = new Intent(RecipientList.this, GiftListActivity.class);
+        		Intent intent = new Intent(RecipientListActivity.this, GiftListActivity.class);
         		intent.putExtra(RECIPIENT_ID_EXTRA, String.valueOf(recipientHelper.getId(recipientCursor)));
         		startActivity(intent);
 			}
@@ -138,7 +138,7 @@ public class RecipientList extends ListActivity
     {
     	public RecipientListAdapter(Cursor cursor) 
     	{
-			super(RecipientList.this, cursor);
+			super(RecipientListActivity.this, cursor);
 		}
     	
     	@Override

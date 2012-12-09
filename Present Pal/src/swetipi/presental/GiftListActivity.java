@@ -1,23 +1,27 @@
-package com.example.presentpalv2;
+package swetipi.presental;
 
 import modelhelpers.GiftHelper;
+import ZXingAssets.IntentIntegrator;
+import ZXingAssets.IntentResult;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 public class GiftListActivity extends ListActivity  
 {
@@ -32,7 +36,7 @@ public class GiftListActivity extends ListActivity
         setContentView(R.layout.activity_gift_list);
         
         giftHelper = new GiftHelper(this);
-        giftCursor = giftHelper.getAll("name");
+        giftCursor = giftHelper.getByRecipientId(getIntent().getStringExtra(RecipientListActivity.RECIPIENT_ID_EXTRA));
         
         ListView list = getListView();
         adapter = new GiftListAdapter(giftCursor);
@@ -103,11 +107,31 @@ public class GiftListActivity extends ListActivity
     	}
     	else if (itemId == R.id.menu_add_gift_barcode)
     	{
-    		// barcode scanner
+    		IntentIntegrator.initiateScan(this);
     	}
     	
     	return super.onOptionsItemSelected(item);
     }
+	
+	// This code was retrieved from adamzwakk.com/create-a-basic-android-barcode-scanner
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+		switch (requestCode)
+		{
+		case IntentIntegrator.REQUEST_CODE:
+			if (resultCode != RESULT_CANCELED)
+			{
+				IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+				if (scanResult != null)
+				{
+					String upc = scanResult.getContents();
+					Log.v("GiftListActivity", upc);
+				}
+			}
+			break;
+		}
+	}
 	
     class GiftListAdapter extends CursorAdapter
     {
