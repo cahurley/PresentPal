@@ -16,6 +16,8 @@ import android.widget.EditText;
 public class DialogFactory
 {
 	private static Button cancelButton;
+	private static String productName;
+	private static String productPrice;
 	
 	public static Dialog createtDialog(final Context context, final Cursor cursor, final DatabaseHelper helper, DialogType type)
 	{
@@ -54,7 +56,7 @@ public class DialogFactory
 
 				return dialog;
 			case ADD_GIFT_MANUALLY:
-				dialog.setContentView(inflater.inflate(R.layout.dialog_add_gift_manual, null));
+				dialog.setContentView(inflater.inflate(R.layout.dialog_add_gift, null));
 				dialog.setTitle("Add New Gift");
 				
 				Button addGiftButton = (Button)dialog.findViewById(R.id.button_add_gift);
@@ -86,9 +88,53 @@ public class DialogFactory
 				});
 				
 				return dialog;
+			case ADD_GIFT_BARCODE:
+				dialog.setContentView(inflater.inflate(R.layout.dialog_add_gift, null));
+				dialog.setTitle("Add New Gift");
+				
+				EditText giftName = (EditText)dialog.findViewById(R.id.edittext_gift_name);
+				giftName.setText(productName);
+				EditText giftPrice = (EditText)dialog.findViewById(R.id.edittext_gift_price);
+				giftPrice.setText(productPrice);
+				
+				Button submitGiftButton = (Button)dialog.findViewById(R.id.button_add_gift);
+				submitGiftButton.setOnClickListener(new OnClickListener()
+				{	
+					@Override
+					public void onClick(View v) 
+					{
+						String giftName = ((EditText)dialog.findViewById(R.id.edittext_gift_name)).getText().toString();
+						double giftPrice = Double.parseDouble(((EditText)dialog.findViewById(R.id.edittext_gift_price)).getText().toString());
+						int giftQuantity = Integer.parseInt(((EditText)dialog.findViewById(R.id.edittext_gift_quantity)).getText().toString());
+						
+						String recipientId = ((Activity)context).getIntent().getStringExtra(RecipientListActivity.RECIPIENT_ID_EXTRA);
+						((GiftHelper)helper).insert(giftName, giftPrice, giftQuantity, recipientId);
+						
+						cursor.requery();
+						
+						dialog.dismiss();
+					}
+				});
+				
+				cancelButton = (Button)dialog.findViewById(R.id.button_cancel_add_gift);
+				cancelButton.setOnClickListener(new OnClickListener()
+				{	
+					public void onClick(View v) 
+					{
+						dialog.cancel();
+					}
+				});
+				
+				return dialog;
 			default:
 				return null;
 		}
+	}
+	
+	public static void setBarcodeDialogText(String giftName, String giftPrice)
+	{
+		productName = giftName;
+		productPrice = giftPrice;
 	}
 	
 }

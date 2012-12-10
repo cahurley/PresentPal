@@ -1,5 +1,8 @@
 package swetipi.presental;
 
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
 import modelhelpers.GiftHelper;
 import ZXingAssets.IntentIntegrator;
 import ZXingAssets.IntentResult;
@@ -10,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +32,7 @@ public class GiftListActivity extends ListActivity
 	private Cursor giftCursor = null;
 	private GiftListAdapter adapter = null;
 	private GiftHelper giftHelper = null;
+	static ArrayList<String> productInformation = null;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) 
@@ -107,6 +112,7 @@ public class GiftListActivity extends ListActivity
     	}
     	else if (itemId == R.id.menu_add_gift_barcode)
     	{
+    		// This code was retrieved from adamzwakk.com/create-a-basic-android-barcode-scanner
     		IntentIntegrator.initiateScan(this);
     	}
     	
@@ -117,19 +123,35 @@ public class GiftListActivity extends ListActivity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{
+		ArrayList<String> productInformation;
 		switch (requestCode)
 		{
-		case IntentIntegrator.REQUEST_CODE:
-			if (resultCode != RESULT_CANCELED)
-			{
-				IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-				if (scanResult != null)
+			case IntentIntegrator.REQUEST_CODE:
+				if (resultCode != RESULT_CANCELED)
 				{
-					String upc = scanResult.getContents();
-					Log.v("GiftListActivity", upc);
+					IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+					if (scanResult != null)
+					{
+						String upc = scanResult.getContents();
+						ProductInformationTask task = (new ProductInformationTask(this));
+						task.execute(upc);
+						
+						try 
+						{
+							productInformation = task.get();
+							Log.v("", String.format("name %s, price %.2f", productInformation.get(0), Double.parseDouble(productInformation.get(1))));
+						}
+						catch (InterruptedException e) 
+						{
+							// nothing
+						}
+						catch (ExecutionException e) 
+						{
+							// nothing
+						}
+					}
 				}
-			}
-			break;
+				break;
 		}
 	}
 	
