@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GiftListActivity extends ListActivity  
 {
@@ -139,7 +140,20 @@ public class GiftListActivity extends ListActivity
 						try 
 						{
 							productInformation = task.get();
-							Log.v("", String.format("name %s, price %.2f", productInformation.get(0), Double.parseDouble(productInformation.get(1))));
+							if (productInformation == null)
+							{
+								AlertDialog.Builder builder = new AlertDialog.Builder(this);
+								builder.setCancelable(true);
+								builder.setTitle("Error");
+								builder.setMessage("Unable to find an item for that barcode");
+								builder.create().show();
+							}
+							else
+							{
+								DialogFactory.setProductInformation(productInformation);
+								Dialog dialog = DialogFactory.createtDialog(this, giftCursor, giftHelper, DialogType.ADD_GIFT_BARCODE);
+								dialog.show();
+							}
 						}
 						catch (InterruptedException e) 
 						{

@@ -55,6 +55,7 @@ public class ProductInformationTask extends AsyncTask<String, Void, ArrayList<St
 			
 			InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
 			result = readStream(inputStream);
+			Log.v("", result);
 			return parseJsonResult(result);
 		}
 		catch (MalformedURLException e) 
