@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -83,6 +86,19 @@ public class GiftListActivity extends ListActivity
 				return true;
 			}	
 
+		});
+        
+        list.setOnItemClickListener(new OnItemClickListener() 
+        {	
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+        	{
+        		if (giftHelper.getQuantityPurchased(giftCursor) < giftHelper.getTotalQuantity(giftCursor))
+        		{
+	        		giftCursor.moveToPosition(position);
+	        		giftHelper.incrementQuantityPurchased(giftHelper.getId(giftCursor), giftCursor);
+	        		giftCursor.requery();
+        		}
+			}
 		});
     }
 	
@@ -215,6 +231,18 @@ public class GiftListActivity extends ListActivity
     		double giftPrice = helper.getPrice(cursor);
     		int quantityPurchased = helper.getQuantityPurchased(cursor);
     		int totalQuantity = helper.getTotalQuantity(cursor);
+    		
+    		if (quantityPurchased >= totalQuantity)
+    		{
+    			name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    			name.setTextColor(Color.GRAY);
+    			
+    			quantity.setPaintFlags(quantity.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    			quantity.setTextColor(Color.GRAY);
+    			
+    			price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    			price.setTextColor(Color.GRAY);
+    		}
     		
     		name.setText(helper.getName(cursor));
     		quantity.setText(String.format("quantity: %d / %d", quantityPurchased, totalQuantity));

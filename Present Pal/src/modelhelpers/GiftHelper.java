@@ -42,7 +42,16 @@ public class GiftHelper extends DatabaseHelper
 		contentValues.put("total_quantity", total_quantity);
 		contentValues.put("recipient_id", recipientId);
 		
-		return getWritableDatabase().insert("gifts", null, contentValues);
+		return getWritableDatabase().insert(TABLE_NAME, null, contentValues);
+	}
+	
+	public void incrementQuantityPurchased(String id, Cursor giftCursor)
+	{
+		String[] whereArgs = {id};
+		ContentValues contentValues = new ContentValues();
+		contentValues.put("quantity_purchased", getQuantityPurchased(giftCursor) + 1);
+		
+		getWritableDatabase().update(TABLE_NAME, contentValues, "_ID=?", whereArgs);
 	}
 	
 	public void update(String id, String name, double price, int quantity_purchased, int total_quantity, String recipientId)
@@ -55,7 +64,7 @@ public class GiftHelper extends DatabaseHelper
 		contentValues.put("total_quantity", total_quantity);
 		contentValues.put("recipient_id", recipientId);
 		
-		getWritableDatabase().update("gifts", contentValues, "_ID=?", whereArgs);
+		getWritableDatabase().update(TABLE_NAME, contentValues, "_ID=?", whereArgs);
 	}
 	
 	public void removeById(String id)
